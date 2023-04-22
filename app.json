@@ -6,7 +6,9 @@
     "orientation": "default",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "permissions": ["expo-linking"],
+    "permissions": [
+      "expo-linking"
+    ],
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -32,6 +34,12 @@
       "eas": {
         "projectId": "7567f58a-32d8-4b82-afae-6f660735ed8a"
       }
+    },
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/7567f58a-32d8-4b82-afae-6f660735ed8a"
     }
   }
 }
