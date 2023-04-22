@@ -26,8 +26,6 @@ export function AuthProvider(props) {
         data["user"]["password"] = password;
         setAuth(data);
         return result;
-      } else {
-        Alert.alert("Error", "Usuario o contraseña incorrectos");
       }
     } catch (error) {
       console.error(error);

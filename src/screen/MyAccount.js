@@ -7,6 +7,7 @@ import {
   RefreshControl,
   Clipboard,
   Dimensions,
+  Linking,
 } from "react-native";
 import React from "react";
 import moment from "moment";
@@ -45,6 +46,15 @@ export default function MyAccount(props) {
 
   const isWideScreen = Dimensions.get("window").width > 768;
 
+  const handleWhatsAppPress = () => {
+    const whatsappNumber = "+5218335355863";
+    const whatsappText =
+      "Hola, les hablo desde la app de Cuentas México, Quiero comprar una cuenta.";
+
+    Linking.openURL(
+      `whatsapp://send?phone=${whatsappNumber}&text=${whatsappText}`
+    );
+  };
   return (
     <View
       style={styles.container}
@@ -65,80 +75,88 @@ export default function MyAccount(props) {
       <Text style={styles.title}>
         Bienvenido {auth?.user?.first_name} {auth?.user?.last_name}
       </Text>
-      <Text style={styles.subTitle}>Cuentas Activas</Text>
-
-      <FlatList
-        data={accounts}
-        renderItem={({ item }) => (
-          <View style={styles.accountContainerParent}>
-            <View
-              style={[
-                styles.accountContainer,
-                isWideScreen && styles.accountContainerWide,
-              ]}
-            >
-              <View style={styles.accountContainerLogo}>
-                {item.account__account_name__logo ? (
-                  <Image
-                    source={{
-                      uri: `${BACKEND_URL}/media/${item.account__account_name__logo}`,
-                    }}
-                    style={styles.logoAcc}
-                  />
-                ) : (
-                  <Text>Cuenta: {item.account__account_name__description}</Text>
-                )}
-                <View style={styles.data}>
-                  <View style={styles.dataEach}>
-                    <Text style={styles.elements}>E-mail: </Text>
-                    <Text onPress={() => copy(item.account__email)}>
-                      {item.account__email}
-                    </Text>
-                  </View>
-                  <View style={styles.dataEach}>
-                    <Text style={styles.elements}>Password: </Text>
-                    <Text onPress={() => copy(item.account__password)}>
-                      {item.account__password}
-                    </Text>
-                  </View>
-                  <View style={styles.dataEach}>
-                    <Text style={styles.elements}>Pin: </Text>
-                    <Text> {item.account__pin}</Text>
-                  </View>
-                  <View style={styles.dataEach}>
-                    <Text style={styles.elements}>Perfil: </Text>
-                    <Text>{item.account__profile}</Text>
-                  </View>
-                  <View style={styles.dataEach}>
-                    <Text style={styles.elements}>Vencimiento: </Text>
-                    <Text>
-                      {moment(item.expiration_date).format("DD-MM-YYYY")}
-                    </Text>
+      {accounts?.length > 0 ? (
+        <View>
+          <Text style={styles.subTitle}>Cuentas Activas</Text>
+          <FlatList
+            data={accounts}
+            renderItem={({ item }) => (
+              <View style={styles.accountContainerParent}>
+                <View
+                  style={[
+                    styles.accountContainer,
+                    isWideScreen && styles.accountContainerWide,
+                  ]}
+                >
+                  <View style={styles.accountContainerLogo}>
+                    {item.account__account_name__logo ? (
+                      <Image
+                        source={{
+                          uri: `${BACKEND_URL}/media/${item.account__account_name__logo}`,
+                        }}
+                        style={styles.logoAcc}
+                      />
+                    ) : (
+                      <Text>
+                        Cuenta: {item.account__account_name__description}
+                      </Text>
+                    )}
+                    <View style={styles.data}>
+                      <View style={styles.dataEach}>
+                        <Text style={styles.elements}>E-mail: </Text>
+                        <Text onPress={() => copy(item.account__email)}>
+                          {item.account__email}
+                        </Text>
+                      </View>
+                      <View style={styles.dataEach}>
+                        <Text style={styles.elements}>Password: </Text>
+                        <Text onPress={() => copy(item.account__password)}>
+                          {item.account__password}
+                        </Text>
+                      </View>
+                      <View style={styles.dataEach}>
+                        <Text style={styles.elements}>Pin: </Text>
+                        <Text> {item.account__pin}</Text>
+                      </View>
+                      <View style={styles.dataEach}>
+                        <Text style={styles.elements}>Perfil: </Text>
+                        <Text>{item.account__profile}</Text>
+                      </View>
+                      <View style={styles.dataEach}>
+                        <Text style={styles.elements}>Vencimiento: </Text>
+                        <Text>
+                          {moment(item.expiration_date).format("DD-MM-YYYY")}
+                        </Text>
+                      </View>
+                    </View>
                   </View>
                 </View>
               </View>
-            </View>
-          </View>
-        )}
-        keyExtractor={(item, index) => index.toString()}
-        onRefresh={async () => {
-          setRefreshing(true);
-          const response = await getActiveAccountByUserApi(auth);
-          const result = await response.json();
-          setAccounts(result.detail);
-          setRefreshing(false);
-        }}
-        refreshing={refreshing}
-        contentContainerStyle={
-          isWideScreen
-            ? {
-                flexWrap: "wrap",
-                flexDirection: "row",
-              }
-            : {}
-        }
-      />
-
+            )}
+            keyExtractor={(item, index) => index.toString()}
+            onRefresh={async () => {
+              setRefreshing(true);
+              const response = await getActiveAccountByUserApi(auth);
+              const result = await response.json();
+              setAccounts(result.detail);
+              setRefreshing(false);
+            }}
+            refreshing={refreshing}
+            contentContainerStyle={
+              isWideScreen
+                ? {
+                    flexWrap: "wrap",
+                    flexDirection: "row",
+                  }
+                : {}
+            }
+          />
+        </View>
+      ) : (
+        <Text style={styles.subTitle} onPress={handleWhatsAppPress}>
+          No hay cuentas activas puedes comprar una haciendo click aqui
+        </Text>
+      )}
       <Button style={styles.button} title="Cerrar Sesion" onPress={logOut} />
     </View>
   );

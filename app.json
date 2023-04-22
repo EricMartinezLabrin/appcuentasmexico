@@ -6,6 +6,7 @@
     "orientation": "default",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "permissions": ["expo-linking"],
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -21,12 +22,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.luinmack.CuentasMexicoApp"
     },
     "web": {
-      "favicon": "./assets/favicon.png",
-      // "bundler": "metro"
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "7567f58a-32d8-4b82-afae-6f660735ed8a"
+      }
     }
-
   }
 }
