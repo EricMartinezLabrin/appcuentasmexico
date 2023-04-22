@@ -17,7 +17,7 @@ export function AuthProvider(props) {
   const logIn = async (username, password) => {
     try {
       const result = await loginApi(username, password);
-      if (result.status == 200) {
+      if (result?.status == 200) {
         const data = await result.json();
         await AsyncStorage.setItem(
           "auth",
@@ -26,6 +26,8 @@ export function AuthProvider(props) {
         data["user"]["password"] = password;
         setAuth(data);
         return result;
+      } else {
+        Alert.alert("Error", "Usuario o contraseña incorrecta");
       }
     } catch (error) {
       console.error(error);
@@ -34,12 +36,12 @@ export function AuthProvider(props) {
 
   const loginRequired = (navigation) => {
     if (!auth) {
-      Alert.alert("Error", "Debes iniciar sesión");
       navigation.navigate("Login");
     }
   };
 
   const logOut = async () => {
+    Alert.alert("Sesión cerrada", "Vuelve pronto");
     setAuth(null);
     await AsyncStorage.removeItem("auth");
   };

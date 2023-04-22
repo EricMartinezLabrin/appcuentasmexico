@@ -8,6 +8,7 @@ import {
   Image,
   SafeAreaView,
   Platform,
+  TouchableOpacity,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import * as yup from "yup";
@@ -24,6 +25,11 @@ const windowWidth = Dimensions.get("window").width;
 export default function Login(props) {
   const { navigation } = props;
   const { logIn, auth } = useAuth();
+  const [showPassword, setShowPassword] = React.useState(false);
+
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
 
   React.useEffect(() => {
     if (auth) {
@@ -34,7 +40,7 @@ export default function Login(props) {
         if (authStorage) {
           const { username, password } = JSON.parse(authStorage);
           logIn(username, password).then((response) => {
-            if (response.status === 200) {
+            if (response?.status === 200) {
               goToMyAccount();
             }
           });
@@ -61,9 +67,10 @@ export default function Login(props) {
         .required("El password es requerido")
         .min(6, "El password debe tener 6 caracteres"),
     }),
-    onSubmit: (formData) => {
+    onSubmit: (formData, { resetForm }) => {
       logIn(formData.username, formData.password).then((response) => {
-        if (response.status === 200) {
+        resetForm();
+        if (response?.status === 200) {
           goToMyAccount();
         }
       });
@@ -71,10 +78,7 @@ export default function Login(props) {
   });
 
   React.useEffect(() => {
-    if (
-      (formik.errors.username && Platform.OS === "ios") ||
-      Platform.OS === "android"
-    ) {
+    if (formik.errors.username && Platform.OS !== "web") {
       Toast.show(formik.errors.username, {
         duration: Toast.durations.LONG,
         position: Toast.positions.BOTTOM,
@@ -87,10 +91,7 @@ export default function Login(props) {
   }, [formik.errors.username]);
 
   React.useEffect(() => {
-    if (
-      (formik.errors.password && Platform.OS === "ios") ||
-      Platform.OS === "android"
-    ) {
+    if (formik.errors.password && Platform.OS !== "web") {
       Toast.show(formik.errors.password, {
         duration: Toast.durations.LONG,
         position: Toast.positions.BOTTOM,
@@ -132,11 +133,15 @@ export default function Login(props) {
             placeholder="Escribe tu password"
             autoCapitalize="none"
             placeholderTextColor={"grey"}
-            secureTextEntry={true}
+            secureTextEntry={showPassword ? true : false}
             value={formik.values.password}
             onChangeText={(text) => formik.setFieldValue("password", text)}
             style={styles.input}
           />
+          <TouchableOpacity onPress={toggleShowPassword} style={styles.icon}>
+            <Icon name={showPassword ? "eye-slash" : "eye"} size={10} />
+          </TouchableOpacity>
+
           <Icon name="lock" style={styles.icon} />
         </View>
 

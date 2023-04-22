@@ -2,7 +2,7 @@
   "expo": {
     "name": "CuentasMexicoApp",
     "slug": "CuentasMexicoApp",
-    "version": "1.0.0",
+    "version": "3.0.0",
     "orientation": "default",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -21,6 +21,7 @@
       "supportsTablet": true
     },
     "android": {
+      "versionCode": 3,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
