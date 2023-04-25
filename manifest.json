@@ -1,0 +1,16 @@
+{
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "lang": "en",
+  "name": "CuentasMexicoApp",
+  "short_name": "CuentasMexicoApp",
+  "start_url": "/?utm_source=web_app_manifest",
+  "related_applications": [
+    {
+      "platform": "play",
+      "url": "http://play.google.com/store/apps/details?id=mx.cuentasmexico.CuentasMexicoApp",
+      "id": "mx.cuentasmexico.CuentasMexicoApp"
+    }
+  ],
+  "prefer_related_applications": true
+}
