@@ -69,9 +69,12 @@ export default function Login(props) {
     }),
     onSubmit: (formData, { resetForm }) => {
       logIn(formData.username, formData.password).then((response) => {
+        response.headers.append("Access-Control-Allow-Origin", "*");
         resetForm();
         if (response?.status === 200) {
           goToMyAccount();
+        } else {
+          Alert.alert("Error", response?.message || "Error al iniciar sesión");
         }
       });
     },

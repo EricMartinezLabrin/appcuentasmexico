@@ -3,14 +3,15 @@ import { BACKEND_URL } from "../assets/Const";
 export async function loginApi(username, password) {
   try {
     const response = await fetch(`${BACKEND_URL}/api/login_api`, {
-      method: "POST",
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+        Authorization: JSON.stringify({
+          username,
+          password,
+        }),
       },
-      body: JSON.stringify({
-        username,
-        password,
-      }),
     });
     return response;
   } catch (error) {
