@@ -136,7 +136,7 @@ export default function Login(props) {
             placeholder="Escribe tu password"
             autoCapitalize="none"
             placeholderTextColor={"grey"}
-            secureTextEntry={showPassword ? true : false}
+            secureTextEntry={showPassword}
             value={formik.values.password}
             onChangeText={(text) => formik.setFieldValue("password", text)}
             style={styles.input}

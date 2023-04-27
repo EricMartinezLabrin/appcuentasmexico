@@ -31,7 +31,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "mx.cuentasmexico.CuentasMexicoApp"
+      "package": "com.luinmack.CuentasMexicoApp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
