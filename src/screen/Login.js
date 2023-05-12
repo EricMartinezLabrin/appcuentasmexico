@@ -69,7 +69,7 @@ export default function Login(props) {
     }),
     onSubmit: (formData, { resetForm }) => {
       logIn(formData.username, formData.password).then((response) => {
-        response.headers.append("Access-Control-Allow-Origin", "*");
+        // response.headers.append("Access-Control-Allow-Origin", "*");
         resetForm();
         if (response?.status === 200) {
           goToMyAccount();

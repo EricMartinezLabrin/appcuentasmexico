@@ -28,3 +28,23 @@ export async function getActiveAccountByUserApi(auth) {
     console.error(error);
   }
 }
+
+export async function setTokenApi(token, username) {
+  try {
+    const response = await fetch(`${BACKEND_URL}/api/set_token`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        token: token,
+        username: username,
+      }),
+    });
+    const data = await response.json();
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.error(error);
+  }
+}

@@ -3,7 +3,6 @@ import Login from "../screen/Login";
 import MyAccount from "../screen/MyAccount";
 
 const Stack = createNativeStackNavigator();
-
 export default function Navigation() {
   return (
     <Stack.Navigator>

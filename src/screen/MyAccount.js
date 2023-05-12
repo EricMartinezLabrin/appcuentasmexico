@@ -8,6 +8,7 @@ import {
   Clipboard,
   Dimensions,
   Linking,
+  ScrollView,
 } from "react-native";
 import React from "react";
 import moment from "moment";
@@ -18,24 +19,36 @@ import useAuth from "../hooks/useAuth";
 import { Colors } from "../assets/Colors";
 import { getActiveAccountByUserApi } from "../api/BackEnd";
 import { BACKEND_URL } from "../assets/Const";
+import { useIsFocused } from "@react-navigation/native";
 
 export default function MyAccount(props) {
   const { navigation } = props;
   const { auth, loginRequired, logOut } = useAuth();
   const [accounts, setAccounts] = React.useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
+  const isFocused = useIsFocused();
 
-  React.useEffect(() => {
+  if (isFocused) {
     try {
-      (async () => {
-        const response = await getActiveAccountByUserApi(auth);
-        const result = await response.json();
-        setAccounts(result.detail);
-      })();
+      if (accounts?.length > 0) {
+        (async () => {
+          const response = await getActiveAccountByUserApi(auth);
+          const result = await response.json();
+          setAccounts(result.detail);
+        })();
+      } else {
+        setTimeout(() => {
+          (async () => {
+            const response = await getActiveAccountByUserApi(auth);
+            const result = await response.json();
+            setAccounts(result.detail);
+          })();
+        }, 600000);
+      }
     } catch (error) {
       console.error(error);
     }
-  }, []);
+  }
 
   loginRequired(navigation);
 
@@ -47,7 +60,7 @@ export default function MyAccount(props) {
   const isWideScreen = Dimensions.get("window").width > 768;
 
   const handleWhatsAppPress = () => {
-    const whatsappNumber = "+5218335355863";
+    const whatsappNumber = "5218335355863";
     const whatsappText =
       "Hola, les hablo desde la app de Cuentas México, Quiero comprar una cuenta.";
 
@@ -77,8 +90,9 @@ export default function MyAccount(props) {
       </Text>
       {accounts?.length > 0 ? (
         <View>
-          <Text style={styles.subTitle}>Cuentas Activas</Text>
+          {/* <Text style={styles.subTitle}>Cuentas Activas</Text> */}
           <FlatList
+            style={{ marginBottom: 150 }}
             data={accounts}
             renderItem={({ item }) => (
               <View style={styles.accountContainerParent}>
@@ -153,9 +167,28 @@ export default function MyAccount(props) {
           />
         </View>
       ) : (
-        <Text style={styles.subTitle} onPress={handleWhatsAppPress}>
-          No hay cuentas activas puedes comprar una haciendo click aqui
-        </Text>
+        <View>
+          <ScrollView
+            style={styles.container}
+            onPress={handleWhatsAppPress}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={async () => {
+                  setRefreshing(true);
+                  const response = await getActiveAccountByUserApi(auth);
+                  const result = await response.json();
+                  setAccounts(result.detail);
+                  setRefreshing(false);
+                }}
+              />
+            }
+          >
+            <Text style={styles.subTitle}>
+              No hay cuentas activas puedes comprar una haciendo click aqui
+            </Text>
+          </ScrollView>
+        </View>
       )}
       <Button style={styles.button} title="Cerrar Sesion" onPress={logOut} />
     </View>
@@ -164,6 +197,7 @@ export default function MyAccount(props) {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     marginTop: 15,
     marginHorizontal: 20,
   },
