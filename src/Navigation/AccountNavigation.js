@@ -17,7 +17,7 @@ export default function ShopNavigation() {
 
   const handleWhatsAppPress = () => {
     const whatsappNumber = "5218335355863";
-    const whatsappText = `Hola!, hice una compra por la aplicación y necesito ayuda, mi username es ${auth.username}`;
+    const whatsappText = `Hola!, hice una compra por la aplicación y necesito ayuda, mi username es ${auth.user.username}`;
 
     Linking.openURL(
       `whatsapp://send?phone=${whatsappNumber}&text=${whatsappText}`
