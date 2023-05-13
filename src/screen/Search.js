@@ -34,9 +34,9 @@ export default function Search(props) {
               <Text style={styles.description}>{item.info}</Text>
               <Text style={styles.price}>
                 $
-                {parseInt(item.price) >= 500
+                {parseInt(item.price) >= 50
                   ? item.price.toLocaleString().replace(",", ".")
-                  : 500}
+                  : 50}
               </Text>
             </View>
           </TouchableOpacity>

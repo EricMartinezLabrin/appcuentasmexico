@@ -42,7 +42,6 @@ export async function setTokenApi(token, username) {
       }),
     });
     const data = await response.json();
-    console.log(data);
     return data;
   } catch (error) {
     console.error(error);
@@ -150,7 +149,6 @@ export async function changePassword(
       }),
     });
     const data = await response.json();
-    console.log(data);
     return { status: response.status, data: data };
   } catch (error) {
     console.error(error);

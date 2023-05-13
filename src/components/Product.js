@@ -12,6 +12,7 @@ import { Colors } from "../assets/Colors";
 
 export default function Product(props) {
   const { item, navigation } = props;
+
   const [isImageError, setIsImageError] = useState(false);
 
   const goToCart = () => {

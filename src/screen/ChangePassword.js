@@ -54,7 +54,6 @@ export default function SignUp(props) {
         formData.confirmPassword,
         auth.user.username
       ).then((response) => {
-        console.log(response);
         Alert.alert(
           "Contraseña Cambiada Correctamente",
           "Inicia sesión con tu nueva contraseña para continuar"
