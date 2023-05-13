@@ -1,4 +1,3 @@
-import React from "react";
 import {
   View,
   Text,
@@ -6,52 +5,38 @@ import {
   StyleSheet,
   Dimensions,
   Image,
-  SafeAreaView,
   Platform,
   TouchableOpacity,
+  ScrollView,
+  Alert,
 } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome5";
+import React from "react";
 import * as yup from "yup";
 import { useFormik } from "formik";
-import Toast from "react-native-root-toast";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import Icon from "react-native-vector-icons/FontAwesome5";
 
-import Button from "../components/Button";
 import { Colors } from "../assets/Colors";
+import Button from "../components/Button";
+import { registerApi } from "../api/BackEnd";
 import useAuth from "../hooks/useAuth";
 
 const windowWidth = Dimensions.get("window").width;
 
-export default function Login(props) {
+export default function SignUp(props) {
   const { navigation } = props;
-  const { logIn, auth } = useAuth();
   const [showPassword, setShowPassword] = React.useState(true);
+  const { logIn } = useAuth();
 
-  const toggleShowPassword = () => {
-    setShowPassword(!showPassword);
+  const goToLogin = () => {
+    navigation.navigate("Login");
   };
-
-  React.useEffect(() => {
-    if (auth) {
-      goToMyAccount();
-    } else {
-      const checkIfLoggedIn = async () => {
-        const authStorage = await AsyncStorage.getItem("auth");
-        if (authStorage) {
-          const { username, password } = JSON.parse(authStorage);
-          logIn(username, password).then((response) => {
-            if (response?.status === 200) {
-              goToMyAccount();
-            }
-          });
-        }
-      };
-      checkIfLoggedIn();
-    }
-  }, [auth]);
 
   const goToMyAccount = () => {
     navigation.navigate("MyAccount");
+  };
+
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
   };
 
   const formik = useFormik({
@@ -61,53 +46,36 @@ export default function Login(props) {
     },
     validateOnChange: false,
     validationSchema: yup.object({
-      username: yup.string().required("El username es requerido"),
-      password: yup
+      username: yup
         .string()
-        .required("El password es requerido")
-        .min(6, "El password debe tener 6 caracteres"),
+        .email("El email no es válido")
+        .required("El email es requerido"),
+      password: yup.string().required("El password es requerido"),
     }),
-    onSubmit: (formData, { resetForm }) => {
-      logIn(formData.username, formData.password).then((response) => {
-        // response.headers.append("Access-Control-Allow-Origin", "*");
-        resetForm();
-        if (response?.status === 200) {
-          goToMyAccount();
-        } else {
-          Alert.alert("Error", response?.message || "Error al iniciar sesión");
+    onSubmit: (formData) => {
+      registerApi(formData.username, formData.password, formData.username).then(
+        (response) => {
+          console.log(response);
+          if (response?.status === 200) {
+            Alert.alert(
+              "Usuario creado",
+              "El usuario se ha creado correctamente"
+            );
+            logIn(formData.username, formData.password).then((response) => {
+              if (response?.status === 200) {
+                goToMyAccount();
+              }
+            });
+          }
         }
-      });
+      );
     },
   });
 
-  React.useEffect(() => {
-    if (formik.errors.username && Platform.OS !== "web") {
-      Toast.show(formik.errors.username, {
-        duration: Toast.durations.LONG,
-        position: Toast.positions.BOTTOM,
-        shadow: true,
-        animation: true,
-        hideOnPress: true,
-        delay: 0,
-      });
-    }
-  }, [formik.errors.username]);
-
-  React.useEffect(() => {
-    if (formik.errors.password && Platform.OS !== "web") {
-      Toast.show(formik.errors.password, {
-        duration: Toast.durations.LONG,
-        position: Toast.positions.BOTTOM,
-        shadow: true,
-        animation: true,
-        hideOnPress: true,
-        delay: 0,
-      });
-    }
-  }, [formik.errors.password]);
-
+  formik.errors.username && Alert.alert("Error", formik.errors.username);
+  formik.errors.password && Alert.alert("Error", formik.errors.password);
   return (
-    <SafeAreaView style={styles.container}>
+    <ScrollView style={styles.container}>
       <Image source={require("../assets/logo.png")} style={styles.logo} />
       <View
         style={[
@@ -115,18 +83,19 @@ export default function Login(props) {
           windowWidth > 400 && { alignSelf: "center", width: 400 },
         ]}
       >
-        <Text style={styles.label}>Username:</Text>
+        <Text style={styles.label}>E-Mail:</Text>
 
         <View style={styles.inputContainer}>
           <TextInput
-            placeholder="Escribe tu username"
+            placeholder="Escribe tu E-Mail"
             autoCapitalize="none"
             placeholderTextColor={"grey"}
             value={formik.values.username}
             onChangeText={(text) => formik.setFieldValue("username", text)}
             style={styles.input}
+            keyboardType="email-address"
           />
-          <Icon name="user" style={styles.icon} />
+          <Icon name="envelope" style={styles.icon} />
         </View>
 
         <Text style={styles.label}>Password:</Text>
@@ -140,6 +109,7 @@ export default function Login(props) {
             value={formik.values.password}
             onChangeText={(text) => formik.setFieldValue("password", text)}
             style={styles.input}
+            returnKeyType="done"
           />
           <TouchableOpacity onPress={toggleShowPassword} style={styles.icon}>
             <Icon name={showPassword ? "eye-slash" : "eye"} size={10} />
@@ -149,10 +119,13 @@ export default function Login(props) {
         </View>
 
         <Button
-          title="Login"
+          title="Registrarse"
           style={styles.button}
           onPress={formik.handleSubmit}
         />
+        <TouchableOpacity onPress={goToLogin}>
+          <Text style={styles.signUp}>¿Ya tienes cuenta? Inicia Sesión.</Text>
+        </TouchableOpacity>
         {Platform.OS === "web" && formik.errors.username && (
           <Text style={styles.error}>{formik.errors.username}</Text>
         )}
@@ -160,21 +133,20 @@ export default function Login(props) {
           <Text style={styles.error}>{formik.errors.password}</Text>
         )}
       </View>
-    </SafeAreaView>
+    </ScrollView>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     width: "100%",
     flex: 1,
     backgroundColor: "#fff",
     alignSelf: "center",
-    justifyContent: "center",
+    // justifyContent: "center",
   },
   logo: {
-    width: 200,
-    height: 200,
+    width: 300,
+    height: 300,
     alignSelf: "center",
     resizeMode: "contain",
   },
@@ -214,5 +186,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 10,
     paddingVertical: 5,
+  },
+  signUp: {
+    color: Colors.secondary,
+    alignSelf: "center",
+    marginTop: 10,
   },
 });

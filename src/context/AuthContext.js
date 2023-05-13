@@ -1,7 +1,8 @@
 import React from "react";
 import { loginApi } from "../api/BackEnd";
-import { Alert } from "react-native";
+import { Alert, Linking } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { APP_URL } from "../assets/Const";
 
 export const AuthContext = React.createContext({
   auth: undefined,
@@ -25,6 +26,14 @@ export function AuthProvider(props) {
         );
         data["user"]["password"] = password;
         setAuth(data);
+
+        if (password === "cuentasmexico") {
+          Alert.alert(
+            "Aun no has cambiado tu contraseña!",
+            "Evita que roben tus claves. Por favor cambia tu contraseña para continuar"
+          );
+          Linking.openURL(APP_URL + "/ChangePassword");
+        }
         return result;
       } else {
         Alert.alert("Error", "Usuario o contraseña incorrecta");

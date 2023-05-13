@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import React from "react";
 import moment from "moment";
+import Icon from "react-native-vector-icons/FontAwesome5";
 // import Clipboard from "@react-native-clipboard/clipboard";
 
 import Button from "../components/Button";
@@ -23,28 +24,18 @@ import { useIsFocused } from "@react-navigation/native";
 
 export default function MyAccount(props) {
   const { navigation } = props;
-  const { auth, loginRequired, logOut } = useAuth();
+  const { auth, loginRequired } = useAuth();
   const [accounts, setAccounts] = React.useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
   const isFocused = useIsFocused();
 
   if (isFocused) {
     try {
-      if (accounts?.length > 0) {
-        (async () => {
-          const response = await getActiveAccountByUserApi(auth);
-          const result = await response.json();
-          setAccounts(result.detail);
-        })();
-      } else {
-        setTimeout(() => {
-          (async () => {
-            const response = await getActiveAccountByUserApi(auth);
-            const result = await response.json();
-            setAccounts(result.detail);
-          })();
-        }, 600000);
-      }
+      (async () => {
+        const response = await getActiveAccountByUserApi(auth);
+        const result = await response.json();
+        setAccounts(result.detail);
+      })();
     } catch (error) {
       console.error(error);
     }
@@ -84,7 +75,6 @@ export default function MyAccount(props) {
         />
       }
     >
-      <Image source={require("../assets/logo.png")} style={styles.logo} />
       <Text style={styles.title}>
         Bienvenido {auth?.user?.first_name} {auth?.user?.last_name}
       </Text>
@@ -92,7 +82,7 @@ export default function MyAccount(props) {
         <View>
           {/* <Text style={styles.subTitle}>Cuentas Activas</Text> */}
           <FlatList
-            style={{ marginBottom: 150 }}
+            style={{ marginBottom: 70 }}
             data={accounts}
             renderItem={({ item }) => (
               <View style={styles.accountContainerParent}>
@@ -190,7 +180,6 @@ export default function MyAccount(props) {
           </ScrollView>
         </View>
       )}
-      <Button style={styles.button} title="Cerrar Sesion" onPress={logOut} />
     </View>
   );
 }
@@ -202,8 +191,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   button: {
-    backgroundColor: Colors.primary,
-    marginTop: 20,
+    left: 100,
   },
   logo: {
     width: 80,
@@ -245,6 +233,7 @@ const styles = StyleSheet.create({
   },
   elements: {
     fontWeight: "bold",
+    fontSize: 12,
   },
   accountContainerParent: {
     width: "100%",

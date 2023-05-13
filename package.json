@@ -14,13 +14,18 @@
     "@expo/webpack-config": "^18.0.1",
     "@react-native-async-storage/async-storage": "1.17.11",
     "@react-native-clipboard/clipboard": "^1.11.2",
+    "@react-navigation/bottom-tabs": "^6.5.7",
     "@react-navigation/native": "^6.1.6",
     "@react-navigation/native-stack": "^6.9.12",
+    "crypto-js": "^4.1.1",
     "expo": "~48.0.11",
+    "expo-crypto": "~12.2.1",
     "expo-device": "^5.2.1",
+    "expo-linking": "^4.0.1",
     "expo-notifications": "^0.18.1",
     "expo-status-bar": "~1.4.4",
     "expo-updates": "~0.16.4",
+    "flowcl-node-api-client": "^1.1.6",
     "formik": "^2.2.9",
     "moment": "^2.29.4",
     "react": "18.2.0",
@@ -36,7 +41,8 @@
     "webpack-cli": "^5.0.1",
     "webpack-dev-server": "^4.13.3",
     "webpack-merge": "^5.8.0",
-    "yup": "^1.1.1"
+    "yup": "^1.1.1",
+    "@stripe/stripe-react-native": "0.23.3"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
