@@ -5,13 +5,7 @@ import { useFormik } from "formik";
 import * as Crypto from "expo-crypto";
 import * as Linking from "expo-linking";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-  useStripe,
-  PlatformPayButton,
-  isPlatformPaySupported,
-  confirmPlatformPayPayment,
-  PlatformPay,
-} from "@stripe/stripe-react-native";
+import { useStripe } from "@stripe/stripe-react-native";
 
 //LOcal
 import { FlowPayment, GetFlowUrlApi } from "../api/Flow";
@@ -28,8 +22,6 @@ export default function Cart(props) {
   const [price, setPrice] = React.useState(startPrice);
   const [months, setMonths] = React.useState(1);
   const [disabled, setDisabled] = React.useState(false);
-  const [isApplePaySupported, setIsApplePaySupported] = React.useState(false);
-  const [isGooglePaySupported, setIsGooglePaySupported] = React.useState(false);
   const [keys, setKeys] = React.useState(null);
   const UUID = Crypto.randomUUID();
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
@@ -53,15 +45,6 @@ export default function Cart(props) {
   }, []);
 
   React.useEffect(() => {
-    (async function () {
-      setIsApplePaySupported(await isPlatformPaySupported());
-      setIsGooglePaySupported(
-        await isPlatformPaySupported({ googlePay: { testEnv: true } })
-      );
-    })();
-  }, [isPlatformPaySupported]);
-
-  React.useEffect(() => {
     if (months < 1) {
       setDisabled(true);
       Alert.alert(
@@ -72,91 +55,6 @@ export default function Cart(props) {
       setDisabled(false);
     }
   }, [months]);
-
-  const fetchPaymentIntentClientSecret = async () => {
-    const response = await fetch(BACKEND_URL + "/api/stripe/create_payment/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        currency: "clp",
-        amount: Math.round(price),
-      }),
-    });
-    if (response.error) {
-      Alert.alert("something went wrong");
-      return;
-    }
-    const { clientSecret } = await response.json();
-
-    return clientSecret;
-  };
-
-  const pay = async () => {
-    const clientSecret = await fetchPaymentIntentClientSecret();
-    const { error } = await confirmPlatformPayPayment(clientSecret, {
-      applePay: {
-        cartItems: [
-          {
-            label: months + " Meses de " + item.name,
-            amount: price,
-            paymentType: PlatformPay.PaymentType.Immediate,
-          },
-        ],
-        merchantCountryCode: "CL",
-        currencyCode: "CLP",
-        requiredBillingContactFields: [PlatformPay.ContactField.PhoneNumber],
-      },
-      googlePay: {
-        testEnv: true,
-        merchantName: "Premium y Codigos",
-        merchantCountryCode: "CL",
-        currencyCode: "CLP",
-        billingAddressConfig: {
-          format: PlatformPay.BillingAddressFormat.Full,
-          isPhoneNumberRequired: true,
-          isRequired: true,
-        },
-      },
-    });
-    if (error) {
-      // handle error
-    } else {
-      // 4.- If payment ok, confirm the payment
-      saleApi(
-        auth,
-        item.id,
-        "Stripe Apple/Android Pay",
-        UUID,
-        price,
-        months
-      ).then((response) => {
-        data = response.json();
-        console.log(data);
-        if (response.status == 200) {
-          console.log(JSON.stringify(paymentIntent, null, 2));
-          navigation.navigate("Confirmation", { item: item });
-        } else {
-          Alert.alert(
-            "Error al realizar la compra",
-            "Contacta a soporte para más información"
-          );
-        }
-      });
-    }
-  };
-
-  const startPaymentFlow = () => {
-    try {
-      console.log(param);
-      FlowPayment(param).then((response) => {
-        Linking.openURL(response);
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   const goToStripe = async () => {
     //1.- Create a payment intent
@@ -222,23 +120,6 @@ export default function Cart(props) {
     );
   };
 
-  const param = {
-    apiKey: keys?.flow_api_key,
-    commerceOrder: UUID,
-    subject: months + " Meses de " + item.description,
-    currency: "CLP",
-    amount: price,
-    email: auth?.user?.email,
-    paymentMethod: 9,
-    urlConfirmation:
-      "https://webhook.site/2f672058-75ce-4701-828c-4f5e1df7c540",
-    urlReturn: APP_URL + "/Confirmation",
-    optional: JSON.stringify({
-      serviceId: item.id,
-      expiration: months,
-    }),
-  };
-
   const formik = useFormik({
     initialValues: {
       time: 1,
@@ -297,38 +178,12 @@ export default function Cart(props) {
           )} */}
 
           <View>
-            {isApplePaySupported && (
-              <PlatformPayButton
-                onPress={pay}
-                type={PlatformPay.ButtonType.Order}
-                appearance={PlatformPay.ButtonStyle.Black}
-                borderRadius={4}
-                style={{
-                  width: "100%",
-                  height: 50,
-                }}
-              />
-            )}
-            {isGooglePaySupported && (
-              <PlatformPayButton
-                onPress={pay}
-                type={PlatformPay.ButtonType.Order}
-                appearance={PlatformPay.ButtonStyle.Black}
-                borderRadius={4}
-                style={{
-                  width: "100%",
-                  height: 50,
-                }}
-              />
-            )}
-            {!isApplePaySupported && !isGooglePaySupported && (
-              <Button
-                title="Comprar con Tarjeta de Credito"
-                onPress={goToStripe}
-                style={styles.buttonCredit}
-                disabled={disabled}
-              />
-            )}
+            <Button
+              title="Comprar con Tarjeta de Credito"
+              onPress={goToStripe}
+              style={styles.buttonCredit}
+              disabled={disabled}
+            />
           </View>
         </View>
       ) : (

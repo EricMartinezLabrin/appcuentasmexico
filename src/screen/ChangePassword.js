@@ -94,7 +94,7 @@ export default function SignUp(props) {
 
           <Icon name="lock" style={styles.icon} />
         </View>
-        <Text style={styles.label}>Password Actual:</Text>
+        <Text style={styles.label}>Nuevo Password:</Text>
 
         <View style={styles.inputContainer}>
           <TextInput
@@ -112,7 +112,7 @@ export default function SignUp(props) {
 
           <Icon name="lock" style={styles.icon} />
         </View>
-        <Text style={styles.label}>Password Actual:</Text>
+        <Text style={styles.label}>Repite el nuevo Password:</Text>
 
         <View style={styles.inputContainer}>
           <TextInput
