@@ -15,7 +15,7 @@ import * as yup from "yup";
 import { useFormik } from "formik";
 import Toast from "react-native-root-toast";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import { useIsFocused } from "@react-navigation/native";
 import Button from "../components/Button";
 import { Colors } from "../assets/Colors";
 import useAuth from "../hooks/useAuth";
@@ -26,6 +26,7 @@ export default function Login(props) {
   const { navigation } = props;
   const { logIn, auth } = useAuth();
   const [showPassword, setShowPassword] = React.useState(true);
+  const isFocused = useIsFocused();
 
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
@@ -48,10 +49,14 @@ export default function Login(props) {
       };
       checkIfLoggedIn();
     }
-  }, [auth]);
+  }, [auth, isFocused]);
 
   const goToMyAccount = () => {
     navigation.navigate("MyAccount");
+  };
+
+  const goToRegister = () => {
+    navigation.navigate("Register");
   };
 
   const formik = useFormik({
@@ -115,7 +120,7 @@ export default function Login(props) {
           windowWidth > 400 && { alignSelf: "center", width: 400 },
         ]}
       >
-        <Text style={styles.label}>Username:</Text>
+        <Text style={styles.label}>Número de Teléfono o Username:</Text>
 
         <View style={styles.inputContainer}>
           <TextInput
@@ -149,10 +154,13 @@ export default function Login(props) {
         </View>
 
         <Button
-          title="Login"
+          title="Iniciar sesión"
           style={styles.button}
           onPress={formik.handleSubmit}
         />
+        <TouchableOpacity onPress={goToRegister}>
+          <Text style={styles.register}>¿No tienes cuenta? Regístrate</Text>
+        </TouchableOpacity>
         {Platform.OS === "web" && formik.errors.username && (
           <Text style={styles.error}>{formik.errors.username}</Text>
         )}
@@ -214,5 +222,12 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 10,
     paddingVertical: 5,
+  },
+  register: {
+    color: Colors.primary,
+    fontWeight: "bold",
+    fontSize: 10,
+    paddingVertical: 5,
+    textAlign: "center",
   },
 });

@@ -1,5 +1,4 @@
 import React from "react";
-import { registerRootComponent } from "expo";
 import { RootSiblingParent } from "react-native-root-siblings";
 import { NavigationContainer } from "@react-navigation/native";
 import { StripeProvider } from "@stripe/stripe-react-native";
@@ -9,7 +8,6 @@ import { AuthProvider } from "./src/context/AuthContext";
 import NotificationApp from "./src/components/Notification";
 import { APP_URL } from "./src/assets/Const";
 import { getKeysApi } from "./src/api/BackEnd";
-registerRootComponent(App);
 
 const linking = {
   prefixes: [APP_URL],
@@ -21,6 +19,7 @@ const linking = {
           Login: "Login",
           SignUp: "SignUp",
           ChangePassword: "ChangePassword",
+          Gift: "Gift",
         },
       },
       ShopNavigation: {
